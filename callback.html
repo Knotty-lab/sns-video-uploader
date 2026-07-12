@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Authorization — SNS Video Uploader</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    max-width: 640px; margin: 0 auto; padding: 3rem 1.25rem;
+    line-height: 1.7; color: #222; background: #fdfdfd;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { color: #ddd; background: #16181d; }
+    #code { background: #12141a !important; border-color: #333 !important; }
+  }
+  h1 { font-size: 1.3rem; }
+  #code {
+    font-family: Consolas, monospace; font-size: .95rem; word-break: break-all;
+    background: #f4f4f6; border: 1px solid #ccc; border-radius: 8px;
+    padding: 1rem; margin: 1rem 0;
+  }
+  button { padding: .6rem 1.2rem; border: 0; border-radius: 8px; font: inherit;
+           font-weight: 600; cursor: pointer; background: #1a2b45; color: #fff; }
+  #copied { margin-left: .6rem; color: #2e8b57; font-weight: 600; }
+  .error { color: #c0392b; }
+</style>
+</head>
+<body>
+<h1>SNS Video Uploader — Authorization</h1>
+<div id="content">Reading authorization response...</div>
+<script>
+const params = new URLSearchParams(location.search);
+const code = params.get("code");
+const error = params.get("error");
+const content = document.getElementById("content");
+if (error) {
+  content.innerHTML = "<p class='error'>Authorization failed: " + error +
+    " — " + (params.get("error_description") || "") + "</p>";
+} else if (code) {
+  content.innerHTML =
+    "<p>Authorization succeeded. Copy the code below and paste it into the tool:</p>" +
+    "<div id='code'></div>" +
+    "<button id='copy'>Copy code</button><span id='copied'></span>" +
+    "<p style='margin-top:1.5rem;font-size:.85rem;opacity:.7'>This is a static page — " +
+    "the code is only displayed here and is not sent anywhere.</p>";
+  document.getElementById("code").textContent = code;
+  document.getElementById("copy").onclick = async () => {
+    await navigator.clipboard.writeText(code);
+    document.getElementById("copied").textContent = "Copied!";
+  };
+} else {
+  content.innerHTML = "<p>No authorization code found. Start the sign-in from the tool.</p>";
+}
+</script>
+</body>
+</html>
